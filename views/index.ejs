@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>ZEO TO DO LIST</title>
+</head>
+<body>
+<header>
+    <div class="header_con">
+        <div class="header_info">
+            <h2>TO DO LIST ZEO</h2>
+        </div>
+    </div>
+</header>
+<div class="main">
+    <div class="main_con">
+        <div class="main_box">
+            <h2>ACTION PLAN</h2>
+            <div class="itemBox">
+                <% for(let items of listItems) { %>
+                    <section class="item" id="item<%= items.id %>">
+                        <input id="checkbox<%= items.id %>" type="checkbox" class="delete-checkbox" data-id="<%= items.id %>" name="deleteItemId" value="<%= items.id %>">
+
+                        <p id="title<%= items.id %>"><%= items.task %></p>
+
+                        <form id="form<%= items.id %>" class="edit-form" action="/edit" method="post" hidden>
+                            <input type="hidden" name="updatedItemId" value="<%= items.id %>">
+                            <input class="input_text" id="input<%= items.id %>" type="text" name="updatedItemTitle" value="<%= items.task %>" autocomplete="off" autofocus="true" hidden>
+                            <button id="done<%= items.id %>" class="editButton" type="submit" hidden>DONE</button>
+                        </form>
+                        <button id="edit<%= items.id %>" class="editButton1" data-id="<%= items.id %>">EDIT</button>
+                    </section>
+                <% } %>
+            </div>
+            <div id="swapDeleteBox" class="swapDeleteBox hidden">
+                <form id="deleteForm" class="delete" action="/delete" method="post">
+                    <button id="delete" class="deleteButton" type="submit">DELETE</button>
+                </form>
+            </div>
+
+            <form class="add" action="/add" method="post">
+                <input class="input_text" type="text" name="newItemTitle" placeholder="Add a new item" autocomplete="off" autofocus="true">
+                <button class="addButton" type="submit">ADD</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        function handler(id) {
+            $("#title" + id).attr("hidden", true);
+            $("#checkbox" + id).attr("hidden", true);
+            $("#edit" + id).attr("hidden", true);
+            $("#done" + id).removeAttr("hidden");
+            $("#input" + id).removeAttr("hidden");
+            $("#form" + id).removeAttr("hidden").addClass("edit");
+        }
+
+        function handlerDelete(id) {
+            $("#edit" + id).attr("hidden", true);
+            const checkboxes = $(".delete-checkbox");
+            const deleteForm = $("#deleteForm");
+            const swapDeleteBox = $("#swapDeleteBox");
+       
+
+            let anyChecked = false;
+            let selectedIds = [];
+
+            checkboxes.each(function() {
+                if ($(this).is(":checked")) {
+                    anyChecked = true;
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (anyChecked) {
+                swapDeleteBox.removeClass("hidden");
+                $("#item" + id).addClass("low-opacity");
+                $("#edit" + id).attr("hidden", true);
+                
+            } else {
+                swapDeleteBox.addClass("hidden");
+                $("#item" + id).removeClass("low-opacity");
+                $("#edit" + id).removeAttr("hidden");
+            }
+
+            // Remove previous inputs and add new ones for checked items
+            deleteForm.find("input[name='deleteItemId']").remove();
+            selectedIds.forEach(id => {
+                deleteForm.append(`<input type="hidden" name="deleteItemId" value="${id}">`);
+            });
+        }
+
+        // Attach event listeners
+        $(".editButton1").click(function() {
+            const id = $(this).data("id");
+            handler(id);
+        });
+
+        $(".delete-checkbox").click(function() {
+            const id = $(this).data("id");
+            handlerDelete(id);
+        });
+    });
+</script>
+</body>
+</html>
