@@ -1,7 +1,7 @@
 # Zeo_todo_list
 This website primarily functions as a to-do list, allowing users to add, delete, update, and view items. It is built using Node.js, EJS, and PostgreSQL.
  
-<strong style="font-weight:bold; display:block; width:100%;">https://zeo-todo-list.onrender.com</strong>
+<strong style="font-weight:bold; display:block; width:100%;">https://quizeo.github.io/To-do-List-React/</strong>
 
 
 <div style=" disply:flex; justify-content: center; margin: 0 auto">
